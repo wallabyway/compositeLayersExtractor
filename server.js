@@ -1,72 +1,44 @@
-/*
-BIM360 Revit Materials extractor
+const forgeApi = require('./forge-apis');
 
-Open Revit file and extract the composite material layers and save as a JSON file
+const jsonServer = require('json-server');
+const server = jsonServer.create();
+const router = jsonServer.router('db.json')
+const middlewares = jsonServer.defaults({ static: 'www', bodyParser: true });
 
-*/
-const fetch = require('node-fetch');
-const fs = require('fs');
-const path = require('path');
-const fastify = require('fastify')({ logger: true })
 
-let ze = null, bm = null;
+/* ENDPOINTS for JOB STATUS */
 
-// serve our static webpage
-fastify.register(require('fastify-static'), {
-  root: path.join(__dirname, 'ui'),
-  prefix: '/', // optional: default '/'
-})
+// Trigger a new job (designAutomation4Revit)
+server.get('/job/trigger', async (req, res) => {
+	server.POST(`job/status/urn?urn=${req.query.urn}`, { status: "inprogress" });
+	const result = await this.forgeApi.triggerJob(req.query.urn, req.query.fileurl);
+	res.jsonp(result);
+});
 
-function setCORS(reply) {
-    reply.header("Access-Control-Allow-Origin", "*");
-    reply.header("Access-Control-Allow-Methods", "POST");    
-}
+// poll for job status.  it uses json server endpoint to serve job status.  ie.
+// GET /job/status?urn=123 , returns: { status : 'complete' }
 
-// INPUT: projectID, folderID, AccessToken
-// OUTPUT: list of BIM360 files in the folder
-fastify.get('/bim/list', async (request, reply) => {
-    if (!request.query.project) return "INPUT: project, folder, token";
-    setCORS(reply);
-    bm = new BIM360utils(request.query.project, request.query.folder, request.query.token);
-    const res = await bm.getFolderContents();
-    return res;
+// set status 'onComplete' using json server, ie.
+// POST /job/status?urn=123 , BODY: {'status':'complete'}
+
+
+
+/* ENDPOINTS for ACC/BIM 360 utility endpoints */ 
+
+// BIM 360 - get folder details
+server.get('/bim/list', async (req, res) => {
+	if (!req.query.folder) return;
+	this.forgeApi = new forgeApi(req.query.token, req.query.project);
+	const result = await this.forgeApi.getFolderContents(req.query.folder);
+	res.jsonp(result);
 });
 
 
-// INPUT: filename
-// OUTPUT: status of result (timeout after 30seconds)
-fastify.get('/transfer', async (request, reply) => {
-    if (!ze && !bm) return {status:`not-ready.  Use 'listcontents' first`};
-    setCORS(reply);
-    if (!request.query.filename) return "INPUT: filename";
-    if (request.query.destFolder) bm.folder = request.query.destFolder;
-    if (request.query.destProject) bm.project = request.query.destProject;
+// Start the web server
+const PORT = process.env.PORT || 8000;
 
-    try {
-        const filename = request.query.filename;
-        const resObj = await bm.createEmptyFile(filename);
-        const status = await ze.extractFile(filename, resObj.destURL);
-        let ress = null;
-        if (request.query.lineage)
-          ress = await bm.bumpVersion(resObj, request.query.lineage);
-        else
-          ress = await bm.createVersion(resObj);
-    } catch(err) {
-        return {status: err};
-    }
-})
-
-// INPUT: filename
-// OUTPUT: status of job
-fastify.get('/status', async (request, reply) => {
-    if (!request.query.filename) return "INPUT: filename";
-    setCORS(reply);
-    const id = request.query.filename;
-    if (!id) return;
-    return (id) ?  `{ "${id}" : "${ze.session[id]}" }` : "missing filename= parameter"
-})
-
-fastify.listen(process.env.PORT || 3000, "0.0.0.0", (err, address) => {
-    if (err) throw err
-    fastify.log.info(`server listening on ${address}`)
-})
+server.use(middlewares);
+server.use(router);
+server.listen(PORT, () => {
+	console.log('JSON server running on port %d', PORT);
+});

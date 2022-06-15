@@ -1,17 +1,15 @@
 {
-    "name": "bim360-revit-composite-extractor",
-    "version": "1.0.0",
-    "description": "proxy-server to extract composite material layers out of revit file on bim 360, and save as json file on bim 360",
-    "main": "server.js",
-    "scripts": {
-      "start": "node server.js"
-    },
-    "author": "michael.beale@autodesk.com",
-    "license": "MIT",
-    "dependencies": {
-      "fastify": "^3.4.1",
-      "fastify-static": "^3.4.0",
-      "fs": "0.0.1-security",
-      "node-fetch": "^2.6.1"
-    }
+  "name": "bim360-revit-composite-extractor",
+  "version": "1.0.0",
+  "description": "proxy-server to extract composite material layers out of revit file on bim 360, and save as json file on bim 360",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "michael.beale@autodesk.com",
+  "license": "MIT",
+  "dependencies": {
+    "json-server": "^0.16.1",
+    "node-fetch": "^2.6.1"
   }
+}
