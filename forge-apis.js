@@ -1,31 +1,42 @@
 const fetch = require('node-fetch');
 
-const BASEAPI = `https://quicktest.herokuapp.com`;
+const BASEAPI = `https://a977-2601-646-4200-5fc-f931-ed0b-4bce-d112.ngrok.io`;
 
 class Forge {
 	constructor(token, project) {
 		this.project = project;
 		this.header = { Authorization: `Bearer ${token}`, "Content-Type": "Application/json" };
 		this.token = token;
-		this.activityId = "8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f.CompoundStructLayerActivity+dev";// "${AppNickName}.${ActivityName}+${ActivityAliasId}";
+		this.activityId = "8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f.OneClickCompoundStructLayerActivity+OneclickTest";// "${AppNickName}.${ActivityName}+${ActivityAliasId}";
 	}
 
 	_header(token) {
 		return { Authorization: `Bearer ${token}`, "Content-Type": "Application/json" };
 	}
 
-	async triggerJob(urn, fileurl) {
+	async triggerJob(urn, fileurl, token) {
 		const tokenTWO = await this.get2leggedAuth();
 
 		const body = {
 			"activityId": this.activityId,
 			"arguments": {
 				"inputFile": {
-					"url": fileurl
+					"url": fileurl,
+					"Headers":{
+                        "Authorization": `Bearer ${token}}`
+                    }
+				},
+				"params": {
+					"verb": "get",
+					"url": `data:application/json,{'urn':'${urn}','options':{'walls':true,'floors':true,'ceilings':true,'extrusionroof':true,'footprintroof':true}}`
 				},
 				"result": {
-					"verb": "put",
-					"url": `${BASEAPI}/urns/${urn}/data`,
+					"verb": "post",
+					"url": `${BASEAPI}/urns/${urn}`,
+				},
+				"onComplete": {
+					"verb": "post",
+					"url": `${BASEAPI}/jobs/${urn}`
 				}
 			}
 		};
