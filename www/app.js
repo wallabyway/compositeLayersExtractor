@@ -1,3 +1,5 @@
+
+
 var ServerURL = '';
 //var ServerURL = 'https://bim360-zip-extract.herokuapp.com';
 
@@ -21,7 +23,8 @@ window.app = new Vue({
 
         onClickItem: function(item) {
             window.sessionStorage.selectedItem = item.url;
-            this.triggerJob(item);
+			this.switchView(item.urn);
+            //this.triggerJob(item);
         },
 
         loginlogout: function() {
@@ -50,13 +53,13 @@ window.app = new Vue({
             this.token = window.sessionStorage.token;
             this.form.srcURN = window.sessionStorage.project;
             this.listBimFiles();
-
+			this.startViewer(document.getElementById('forgeviewer'));
             this.showtoast('starting...')
         },
 
         triggerJob: async function(item) {
             this.showtoast("Processing");
-            const url = `${ServerURL}/job/trigger?urn=${item.urn}&fileurl=${item.url}&token=${this.token}`;
+            const url = `${ServerURL}/job/trigger?urn=${item.urn.split('/')[0]}&fileurl=${item.url}&token=${this.token}`;
             const res = await (await fetch( url, {mode: 'cors'} )).json();
             this.showtoast(res);
             console.log(res);
@@ -79,6 +82,29 @@ window.app = new Vue({
             this.toastmsg = msg;
             setTimeout(function(){ app.istoast=false; }, 3000);
         },
+
+		switchView(urn) {
+			Autodesk.Viewing.Document.load(`urn:${urn}`, (doc) => {
+				var viewables = doc.getRoot().getDefaultGeometry();
+				viewer.loadDocumentNode(doc, viewables).then( ()=>{ console.log(`loaded ${urn}`)} );
+			});
+		},
+
+		startViewer(div) {
+			const options = {
+				env: 'AutodeskProduction',
+				accessToken: this.token,
+				isAEC: true
+			};
+		
+			Autodesk.Viewing.Initializer(options, () => {
+				viewer = new Autodesk.Viewing.Private.GuiViewer3D(div, 
+					{ extensions: ['HistogramExtension'] });
+				viewer.start();
+				viewer.setTheme("light-theme");
+				this.viewer = viewer;
+			});			
+		}
     }
 })
 
