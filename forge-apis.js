@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-const BASEAPI = `https://a977-2601-646-4200-5fc-f931-ed0b-4bce-d112.ngrok.io`;
+const BASEAPI = `https://quiet-sky-7620.fly.dev`;
 
 class Forge {
 	constructor(token, project) {
