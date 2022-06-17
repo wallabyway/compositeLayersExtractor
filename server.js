@@ -25,12 +25,13 @@ function addreplaceURN(key, urn, data ) {
 	if (exists.value())
 		chain.updateById(urn, data).write();
 	else
-		chain.insert({ "id": urn, ...data}).write();
+		chain.insert(data).write();
 }
 
 server.post('/urns/:urn', function (req, res) {
 	addreplaceURN("jobs", req.params.urn, {"status": "complete" } );
-	addreplaceURN("urns", req.params.urn, { "data" : req.body } );
+	req.body.id = req.body.urn;
+	addreplaceURN("urns", req.params.urn, req.body );
 	res.sendStatus(200)
 });
 
