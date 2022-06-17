@@ -24,7 +24,7 @@ window.app = new Vue({
         onClickItem: function(item) {
             window.sessionStorage.selectedItem = item.url;
 			this.switchView(item.urn);
-            //this.triggerJob(item);
+            this.triggerJob(item);
         },
 
         loginlogout: function() {
