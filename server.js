@@ -30,7 +30,7 @@ function addreplaceURN(key, urn, data ) {
 
 server.post('/jobs/:urn', function (req, res) {
 	req.body.workItemId = req.body.id;
-	req.body.id = req.body.urn;
+	req.body.id = req.params.urn;
 	addreplaceURN("jobs", req.params.urn, req.body );
 });
 
