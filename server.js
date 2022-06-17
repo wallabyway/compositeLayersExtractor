@@ -28,6 +28,12 @@ function addreplaceURN(key, urn, data ) {
 		chain.insert(data).write();
 }
 
+server.post('/jobs/:urn', function (req, res) {
+	req.body.workItemId = req.body.id;
+	req.body.id = req.body.urn;
+	addreplaceURN("jobs", req.params.urn, req.body );
+});
+
 server.post('/urns/:urn', function (req, res) {
 	addreplaceURN("jobs", req.params.urn, {"status": "complete" } );
 	req.body.id = req.body.urn;
