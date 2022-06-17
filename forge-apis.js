@@ -36,10 +36,6 @@ class Forge {
 					"Headers":{
                         "Content-Type": `application/json`
                     }
-				},
-				"onComplete": {
-					"verb": "post",
-					"url": `${BASEAPI}/jobs/${urn}`
 				}
 			}
 		};

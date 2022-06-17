@@ -29,6 +29,7 @@ function addreplaceURN(key, urn, data ) {
 }
 
 server.post('/urns/:urn', function (req, res) {
+	addreplaceURN("jobs", req.params.urn, {"status": "complete" } );
 	addreplaceURN("urns", req.params.urn, { "data" : req.body } );
 	res.sendStatus(200)
 });
