@@ -15,7 +15,7 @@ class Forge {
 	}
 
 	async triggerJob(urn, fileurl, token) {
-		const tokenTWO = await this.get2leggedAuth();
+		const DAPluginToken = await this.get2leggedAuth();
 
 		const body = {
 			"activityId": this.activityId,
@@ -33,6 +33,9 @@ class Forge {
 				"result": {
 					"verb": "post",
 					"url": `${BASEAPI}/urns/${urn}`,
+					"Headers":{
+                        "Content-Type": `application/json`
+                    }
 				},
 				"onComplete": {
 					"verb": "post",
@@ -42,7 +45,7 @@ class Forge {
 		};
 
 		const res = await fetch(`https://developer.api.autodesk.com/da/us-east/v3/workitems`, {
-			method: 'POST', headers: this._header(tokenTWO), body: JSON.stringify(body)
+			method: 'POST', headers: this._header(DAPluginToken), body: JSON.stringify(body)
 		});
 		const result = await res.json();
 		return result;
