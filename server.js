@@ -35,7 +35,6 @@ server.post('/jobs/:urn', function (req, res) {
 });
 
 server.post('/urns/:urn', function (req, res) {
-	addreplaceURN("jobs", req.params.urn, {"status": "complete" } );
 	req.body.id = req.body.urn;
 	addreplaceURN("urns", req.params.urn, req.body );
 	res.sendStatus(200)
