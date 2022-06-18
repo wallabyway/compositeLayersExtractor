@@ -31,6 +31,7 @@ function addreplaceURN(key, urn, data ) {
 server.post('/jobs/:urn', function (req, res) {
 	req.body.workItemId = req.body.id;
 	req.body.id = req.params.urn;
+	if (!req.body.status) req.body.status = "inprogress"; 
 	addreplaceURN("jobs", req.params.urn, req.body );
 });
 
