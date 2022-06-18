@@ -12,7 +12,7 @@ const JOBS = [];
 
 // Trigger a new job (designAutomation4Revit)
 server.get('/job/trigger', async (req, res) => {
-	addreplaceURN("jobs", req.query.urn, {status:"inprogress"});
+	//addreplaceURN("jobs", req.query.urn, {status:"inprogress"});
 	const result = await this.forgeApi.triggerJob(req.query.urn, req.query.fileurl, req.query.token);
 	res.jsonp(result);
 });
