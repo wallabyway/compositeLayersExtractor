@@ -7,7 +7,7 @@ class Forge {
 		this.project = project;
 		this.header = { Authorization: `Bearer ${token}`, "Content-Type": "Application/json" };
 		this.token = token;
-		this.activityId = "8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f.OneClickCompoundStructLayerActivity+OneclickTest";// "${AppNickName}.${ActivityName}+${ActivityAliasId}";
+		this.activityId = "8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f.CompoundStructLayerActivityv3+OneclickFixed";// "${AppNickName}.${ActivityName}+${ActivityAliasId}";
 	}
 
 	_header(token) {
