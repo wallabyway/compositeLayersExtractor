@@ -18,7 +18,7 @@
             "Slope": "0.000 °",
             "Perimeter": "48000.000 mm",
             "Elevation at Top": "0.000 mm",
-            "Elevation at Bottom": "-150.000 mm",
+            "Elevation at Bottom": "-150.000 mm"
           },
           "wallLayers": [
             {
@@ -61,7 +61,7 @@
             "Slope": "0.000 °",
             "Perimeter": "48000.000 mm",
             "Elevation at Top": "0.000 mm",
-            "Elevation at Bottom": "-150.000 mm",
+            "Elevation at Bottom": "-150.000 mm"
           }
         }
       ]
