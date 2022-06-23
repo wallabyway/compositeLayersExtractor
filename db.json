@@ -1,7 +1,71 @@
 {
+  "views": [
+  ],
   "jobs": [
   ],
   "urns": [
+    {
+      "urn": "dXJuSAMPLESAMPLESAMPLETXc",
+      "results": [
+        {
+          "uniqueId": "ef57b02a-5e81-49e7-93bb-ae5f002d921c-00030826",
+          "category": "Floors",
+          "Structural Material": "Concrete, Cast In Situ",
+          "Dimensions": {
+            "Area": "105.906 m^2",
+            "Volume": "15.886 m^3",
+            "Thickness": "150.000 mm",
+            "Slope": "0.000 °",
+            "Perimeter": "48000.000 mm",
+            "Elevation at Top": "0.000 mm",
+            "Elevation at Bottom": "-150.000 mm",
+          },
+          "wallLayers": [
+            {
+              "function": "Structure",
+              "material": "Concrete - Pre Cast",
+              "width": 0.13123359580052493
+            },
+            {
+              "function": "Insulation",
+              "material": "",
+              "width": 0.01968503937007874
+            },
+            {
+              "function": "Insulation",
+              "material": "Rigid insulation",
+              "width": 0.13123359580052493
+            },
+            {
+              "function": "Finish2",
+              "material": "Concrete - Pre Cast",
+              "width": 0.19685039370078738
+            }
+          ]
+        },
+        {
+          "uniqueId": "17836a3c-e764-47fa-a2e0-08216444f621-00078937",
+          "wallLayers": [
+            {
+              "function": "Structure",
+              "material": "Concrete - Precast Concrete - 35 MPa",
+              "width": 0.6561679790026247
+            }
+          ],
+          "category": "Floors",
+          "Structural Material": "Concrete, Cast In Situ",
+          "Dimensions": {
+            "Area": "105.906 m^2",
+            "Volume": "15.886 m^3",
+            "Thickness": "150.000 mm",
+            "Slope": "0.000 °",
+            "Perimeter": "48000.000 mm",
+            "Elevation at Top": "0.000 mm",
+            "Elevation at Bottom": "-150.000 mm",
+          }
+        }
+      ]
+    }
   ],
   "auth": {
     "clientid": "12345"
