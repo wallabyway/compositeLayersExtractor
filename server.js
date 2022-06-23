@@ -19,6 +19,7 @@ server.get('/job/trigger', async (req, res) => {
 
 
 // add/replace keys[urn] = data
+// make the URN's data mutable.
 function addreplaceURN(key, urn, data ) {
 	const chain = router.db.get(key); 
 	const exists = chain.getById(urn);
@@ -38,6 +39,8 @@ server.post('/jobs/:urn', function (req, res) {
 
 server.post('/urns/:urn', function (req, res) {
 	req.body.id = req.body.urn;
+
+	this.forgeApi.injectAdditionalProperties(req.body.urn, req.body)
 	addreplaceURN("urns", req.params.urn, req.body );
 	res.sendStatus(200)
 });
