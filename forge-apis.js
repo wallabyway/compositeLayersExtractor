@@ -88,6 +88,7 @@ class Forge {
 
 
 	injectAdditionalProperties(urn, body) {
+		return;
 		// incorporate code from https://gist.github.com/JoaoMartins-Forge/15dead268936a8ac1d4cdd75e0fd45ac#file-connectmaterials-js-L60-L91
 		if (!body.results) return;
 		
