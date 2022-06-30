@@ -40,7 +40,7 @@ server.post('/jobs/:urn', function (req, res) {
 server.post('/urns/:urn', function (req, res) {
 	req.body.id = req.body.urn;
 
-	this.forgeApi.injectAdditionalProperties(req.body.urn, req.body)
+	// this.forgeApi.injectAdditionalProperties(req.body.urn, req.body)
 	addreplaceURN("urns", req.params.urn, req.body );
 	res.sendStatus(200)
 });
