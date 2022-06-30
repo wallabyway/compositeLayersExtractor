@@ -80,7 +80,7 @@ window.app = new Vue({
             console.log(msg);
             this.istoast = true;
             this.toastmsg = msg;
-            setTimeout(function(){ app.istoast=false; }, 3000);
+            setTimeout(function(){ app.istoast=false; }, 5000);
         },
 
 		switchView(urn) {
