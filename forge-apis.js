@@ -88,20 +88,15 @@ class Forge {
 
 
 	injectAdditionalProperties(urn, body) {
-		if (!body.results) return;
-		// create temporary data, for now.
 		// incorporate code from https://gist.github.com/JoaoMartins-Forge/15dead268936a8ac1d4cdd75e0fd45ac#file-connectmaterials-js-L60-L91
-		body.results.category = "Floors";
-		body.results["Structural Material"] = "Concrete, Cast In Situ",
-		body.results["Dimensions"] = {
-			"Area": "105.906 m^2",
-			"Volume": "15.886 m^3",
-			"Thickness": "150.000 mm",
-			"Slope": "0.000 °",
-			"Perimeter": "48000.000 mm",
-			"Elevation at Top": "0.000 mm",
-			"Elevation at Bottom": "-150.000 mm"
-		}
+		if (!body.results) return;
+		
+		// create temporary data, for now.
+		body.results.CLASS = "Internal Wall";
+		body.results.IFCMATERIAL = "Precast Concrete";
+		body.results.QUANTITY = "2.34";
+		body.results.QTY_TYPE = "M3";
+		body.results.THICKNESS ="150.000 mm";
 	}
 
 	async get2leggedAuth() {
