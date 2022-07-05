@@ -1,0 +1,22 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "pwa-node",
+			"request": "launch",
+			"name": "Launch Program",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"program": "${workspaceFolder}/server.js",
+			"env":{
+				"FORGE_CLIENTID":"8nW...bC4f",
+				"FORGE_SECRET":"9a...mvc",
+				"FORGE_ACTIVITYID":"8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f.CompoundStructLayerActivityv3+OneclickFixed"
+			}
+		}
+	]
+}

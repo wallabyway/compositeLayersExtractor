@@ -1,13 +1,18 @@
 const fetch = require('node-fetch');
 
 const BASEAPI = `https://quiet-sky-7620.fly.dev`;
+const config = {
+	CLIENTID : process.env.FORGE_CLIENTID,
+	SECRET : process.env.FORGE_SECRET,
+	ACTIVITYID : process.env.FORGE_ACTIVITYID,
+};
+
 
 class Forge {
 	constructor(token, project) {
 		this.project = project;
 		this.header = { Authorization: `Bearer ${token}`, "Content-Type": "Application/json" };
 		this.token = token;
-		this.activityId = "8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f.CompoundStructLayerActivityv3+OneclickFixed";// "${AppNickName}.${ActivityName}+${ActivityAliasId}";
 	}
 
 	_header(token) {
@@ -18,7 +23,7 @@ class Forge {
 		const DAPluginToken = await this.get2leggedAuth();
 
 		const body = {
-			"activityId": this.activityId,
+			"activityId": config.ACTIVITYID,
 			"arguments": {
 				"inputFile": {
 					"url": fileurl,
@@ -103,9 +108,7 @@ class Forge {
 	async get2leggedAuth() {
 		const url = `https://developer.api.autodesk.com/authentication/v1/authenticate`;
 		const header = { 'Content-Type': 'application/x-www-form-urlencoded' };
-		const clientid = "8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f";
-		const secret = "9aolzHUfu7ggemvc";
-		const body = `grant_type=client_credentials&client_id=${clientid}&client_secret=${secret}&scope=data:read`;
+		const body = `grant_type=client_credentials&client_id=${config.CLIENTID}&client_secret=${config.SECRET}&scope=data:read`;
 		let token = await fetch(url, { method: 'POST', headers: header, body: body });
 		token = await token.json();
 		return token.access_token;
