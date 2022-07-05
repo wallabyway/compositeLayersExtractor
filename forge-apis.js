@@ -93,16 +93,13 @@ class Forge {
 
 
 	injectAdditionalProperties(urn, body) {
-		return;
 		// incorporate code from https://gist.github.com/JoaoMartins-Forge/15dead268936a8ac1d4cdd75e0fd45ac#file-connectmaterials-js-L60-L91
+		const props = {
+			"class":"Internal Wall",
+			"ifcmaterial":"Precast Concrete",
+		}
 		if (!body.results) return;
-		
-		// create temporary data, for now.
-		body.results.CLASS = "Internal Wall";
-		body.results.IFCMATERIAL = "Precast Concrete";
-		body.results.QUANTITY = "2.34";
-		body.results.QTY_TYPE = "M3";
-		body.results.THICKNESS ="150.000 mm";
+		return Object.assign(body, props);
 	}
 
 	async get2leggedAuth() {
