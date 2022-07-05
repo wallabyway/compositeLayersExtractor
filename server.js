@@ -13,6 +13,7 @@ _forgeApi = null;
 
 // Trigger a new job (designAutomation4Revit)
 server.get('/job/trigger', async (req, res) => {
+	if (!_forgeApi) {console.log('missing _forgeApi'); return;}
 	const result = await _forgeApi.triggerJob(req.query.urn, req.query.fileurl, req.query.token);
 	const workItemId = result.id;
 	addreplaceURN("jobs", workItemId, {id:workItemId, workItemId:workItemId, urn:req.query.urn, status:"Queued", reportUrl:{}, stats:{}});
@@ -41,7 +42,7 @@ server.post('/jobs/:urn', function (req, res) {
 
 server.post('/urns/:urn', function (req, res) {
 	req.body.id = req.params.urn;
-
+	if (!_forgeApi) {console.log('missing _forgeApi'); return;}
 	const results = _forgeApi.injectAdditionalProperties(req.params.urn, req.body)
 	addreplaceURN("urns", req.params.urn, results );
 	res.sendStatus(200)
