@@ -7,13 +7,15 @@ const middlewares = jsonServer.defaults({ static: 'www', bodyParser: true });
 server.use(middlewares);
 
 const JOBS = [];
+_forgeApi = null;
 
 /* ENDPOINTS for JOB STATUS */
 
 // Trigger a new job (designAutomation4Revit)
 server.get('/job/trigger', async (req, res) => {
-	addreplaceURN("jobs", req.query.urn, {status:"queued", reportUrl:{}, stats:{}});
-	const result = await this.forgeApi.triggerJob(req.query.urn, req.query.fileurl, req.query.token);
+	const result = await _forgeApi.triggerJob(req.query.urn, req.query.fileurl, req.query.token);
+	const workItemId = result.id;
+	addreplaceURN("jobs", workItemId, {id:workItemId, workItemId:workItemId, urn:req.query.urn, status:"Queued", reportUrl:{}, stats:{}});
 	res.jsonp(result);
 });
 
@@ -34,14 +36,14 @@ server.post('/jobs/:urn', function (req, res) {
 	req.body.workItemId = req.body.id;
 	req.body.id = req.params.urn;
 	if (!req.body.status) req.body.status = "inprogress"; 
-	addreplaceURN("jobs", req.params.urn, req.body );
+	addreplaceURN("jobs", req.body.workItemId, req.body );
 });
 
 server.post('/urns/:urn', function (req, res) {
-	req.body.id = req.body.urn;
+	req.body.id = req.params.urn;
 
-	// this.forgeApi.injectAdditionalProperties(req.body.urn, req.body)
-	addreplaceURN("urns", req.params.urn, req.body );
+	const results = _forgeApi.injectAdditionalProperties(req.params.urn, req.body)
+	addreplaceURN("urns", req.params.urn, results );
 	res.sendStatus(200)
 });
 
@@ -59,8 +61,8 @@ server.post('/urns/:urn', function (req, res) {
 // BIM 360 - get folder details
 server.get('/bim/list', async (req, res) => {
 	if (!req.query.folder) return;
-	this.forgeApi = new forgeApi(req.query.token, req.query.project);
-	const result = await this.forgeApi.getFolderContents(req.query.folder);
+	_forgeApi = new forgeApi(req.query.token, req.query.project);
+	const result = await _forgeApi.getFolderContents(req.query.folder);
 	res.jsonp(result);
 });
 
