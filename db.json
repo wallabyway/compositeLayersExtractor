@@ -28,8 +28,8 @@
       "results": [
         {
           "uniqueId": "ef57b02a-5e81-49e7-93bb-ae5f002d921c-00030826",
-          "category": "Floors",
-          "Structural Material": "Concrete, Cast In Situ",
+          "class": "Floors",
+          "IFCMaterial": "Concrete, Cast In Situ",
           "Dimensions": {
             "Area": "105.906 m^2",
             "Volume": "15.886 m^3",
