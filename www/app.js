@@ -83,10 +83,18 @@ window.app = new Vue({
             setTimeout(function(){ app.istoast=false; }, 5000);
         },
 
+		
 		switchView(urn) {
+			async function enableGeomtricBoxSelection() {
+				viewer.unloadExtension('Autodesk.BoxSelection');
+				ext = await viewer.loadExtension('Autodesk.BoxSelection', { useGeometricIntersection: true });
+				// invoke box selection by holding cmd(mac) / ctrl(windows) + mouse drag
+				ext.addToolbarButton(true);
+			}
+
 			Autodesk.Viewing.Document.load(`urn:${urn}`, (doc) => {
 				var viewables = doc.getRoot().getDefaultGeometry();
-				viewer.loadDocumentNode(doc, viewables).then( ()=>{ console.log(`loaded ${urn}`)} );
+				viewer.loadDocumentNode(doc, viewables).then( ()=>{ enableGeomtricBoxSelection(); console.log(`loaded ${urn}`)} );
 			});
 		},
 
@@ -99,7 +107,7 @@ window.app = new Vue({
 		
 			Autodesk.Viewing.Initializer(options, () => {
 				viewer = new Autodesk.Viewing.Private.GuiViewer3D(div, 
-					{ extensions: ['HistogramExtension'] });
+					{ extensions: ['HistogramExtension', 'Autodesk.BoxSelection'] });
 				viewer.start();
 				viewer.setTheme("light-theme");
 				this.viewer = viewer;

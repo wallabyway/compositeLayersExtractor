@@ -34,14 +34,14 @@ class HistogramExtension extends BaseExtension {
     }
 
     onToolbarCreated() {
-        this._barChartPanel = new HistogramPanel(this, 'dashboard-barchart-panel', 'Property Histogram', { x: 10, y: 10, chartType: 'bar' });
-        this._pieChartPanel = new HistogramPanel(this, 'dashboard-piechart-panel', 'Property Histogram', { x: 10, y: 420, chartType: 'doughnut' });
+        this._barChartPanel = new HistogramPanel(this, 'dashboard-barchart-panel', 'Structural Material', { x: 0, y: 0, chartType: 'bar', width:400 });
+        this._pieChartPanel = new HistogramPanel(this, 'dashboard-piechart-panel', 'Material', { x: 0, y: 400, chartType: 'doughnut', width:300 });
         this._barChartButton = this.createToolbarButton('dashboard-barchart-button', 'https://img.icons8.com/small/32/bar-chart.png', 'Show Property Histogram (Bar Chart)');
         this._barChartButton.onClick = () => {
             this._barChartPanel.setVisible(!this._barChartPanel.isVisible());
             this._barChartButton.setState(this._barChartPanel.isVisible() ? Autodesk.Viewing.UI.Button.State.ACTIVE : Autodesk.Viewing.UI.Button.State.INACTIVE);
             if (this._barChartPanel.isVisible() && this.viewer.model) {
-                this._barChartPanel.setModel(this.viewer.model);
+                this._barChartPanel.setModel(this.viewer.model,"Structural Material");
             }
         };
         this._pieChartButton = this.createToolbarButton('dashboard-piechart-button', 'https://img.icons8.com/small/32/pie-chart.png', 'Show Property Histogram (Pie Chart)');
@@ -49,7 +49,7 @@ class HistogramExtension extends BaseExtension {
             this._pieChartPanel.setVisible(!this._pieChartPanel.isVisible());
             this._pieChartButton.setState(this._pieChartPanel.isVisible() ? Autodesk.Viewing.UI.Button.State.ACTIVE : Autodesk.Viewing.UI.Button.State.INACTIVE);
             if (this._pieChartPanel.isVisible() && this.viewer.model) {
-                this._pieChartPanel.setModel(this.viewer.model);
+                this._pieChartPanel.setModel(this.viewer.model,"Material");
             }
         };
     }
@@ -57,10 +57,10 @@ class HistogramExtension extends BaseExtension {
     onModelLoaded(model) {
         super.onModelLoaded(model);
         if (this._barChartPanel && this._barChartPanel.isVisible()) {
-            this._barChartPanel.setModel(model);
+            this._barChartPanel.setModel(model,"Structural Material");
         }
         if (this._pieChartPanel && this._pieChartPanel.isVisible()) {
-            this._pieChartPanel.setModel(model);
+            this._pieChartPanel.setModel(model,"Material");
         }
     }
 

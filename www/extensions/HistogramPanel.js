@@ -2,11 +2,11 @@ export class HistogramPanel extends Autodesk.Viewing.UI.DockingPanel {
     constructor(extension, id, title, options) {
         super(extension.viewer.container, id, title, options);
         this.extension = extension;
-        this.container.style.left = (options.x || 0) + 'px';
+        this.container.style.right = (options.x || 0) + 'px';
         this.container.style.top = (options.y || 0) + 'px';
-        this.container.style.width = (options.width || 500) + 'px';
+        this.container.style.width = (options.width || 300) + 'px';
         this.container.style.height = (options.height || 400) + 'px';
-        this.container.style.resize = 'none';
+        this.container.style.resize = 'auto';
         this.chartType = options.chartType || 'bar'; // See https://www.chartjs.org/docs/latest for all the supported types of charts
         this.chart = this.createChart();
     }
@@ -42,9 +42,9 @@ export class HistogramPanel extends Autodesk.Viewing.UI.DockingPanel {
         });
     }
 
-    async setModel(model) {
+    async setModel(model, defaultValue) {
         const propertyNames = await this.extension.findPropertyNames(model);
-        this.select.innerHTML = propertyNames.map(prop => `<option value="${prop}">${prop}</option>`).join('\n');
+        this.select.innerHTML = propertyNames.map(prop => `<option value="${prop}" ${(prop==defaultValue) ? "selected":""}>${prop}</option>`).join('\n');
         this.select.onchange = () => this.updateChart(model, this.select.value);
         this.updateChart(model, this.select.value);
     }
