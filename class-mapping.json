@@ -1,0 +1,14 @@
+{
+	"Walls": "WALL",
+	"Structural Columns": "COLUMN",
+	"Roofs": "ROOF",
+	"Floors": "SLAB",
+	"Stairs": "STAIRS",
+	"Doors": "DOOR",
+	"Windows": "WINDOW",
+	"Plumbing Fixtures": "SYSTEMS",
+	"Furniture": "FURNITURE",
+	"Furniture Systems": "FURNITURE",
+	"Site": "SITE",
+	"Topography": "SITE"
+}
