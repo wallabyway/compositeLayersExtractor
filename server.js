@@ -37,7 +37,7 @@ server.post('/jobs/:urn', function (req, res) {
 	req.body.urn = req.params.urn;
 	if (!req.body.status) req.body.status = "processing"; 
 	req.body.time = Date().toString();
-	console.log("job:",req.body);
+	console.info("job:",req.body);
 	addreplaceURN("jobs", req.body.workItemId, req.body );
 	res.sendStatus(200);
 });
@@ -75,5 +75,5 @@ const PORT = process.env.PORT || 8000;
 
 server.use(router);
 server.listen(PORT, () => {
-	console.log('JSON server running on port %d', PORT);
+	console.info('JSON server running on port %d', PORT);
 });

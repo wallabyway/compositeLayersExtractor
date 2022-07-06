@@ -1,12 +1,13 @@
 const fetch = require('node-fetch');
 
-const BASEAPI = `https://quiet-sky-7620.fly.dev`;
 const config = {
 	CLIENTID : process.env.FORGE_CLIENTID,
 	SECRET : process.env.FORGE_SECRET,
 	ACTIVITYID : process.env.FORGE_ACTIVITYID,
+	BASEAPI : process.env.BASEAPI //`https://quiet-sky-7620.fly.dev`
 };
 
+console.error(config);
 
 class Forge {
 	constructor(token) {
@@ -36,21 +37,21 @@ class Forge {
 				},
 				"result": {
 					"verb": "post",
-					"url": `${BASEAPI}/urns/${urn}`,
+					"url": `${config.BASEAPI}/urns/${urn}`,
 					"Headers":{
                         "Content-Type": `application/json`
                     }
 				},
 				"onProgress": {
 					"verb": "post",
-					"url": `${BASEAPI}/jobs/${urn}`,
+					"url": `${config.BASEAPI}/jobs/${urn}`,
 					"Headers":{
                         "Content-Type": `application/json`
                     }
 				},
 				"onComplete": {
 					"verb": "post",
-					"url": `${BASEAPI}/jobs/${urn}`,
+					"url": `${config.BASEAPI}/jobs/${urn}`,
 					"Headers":{
                         "Content-Type": `application/json`
                     }
@@ -107,6 +108,7 @@ class Forge {
 		const body = `grant_type=client_credentials&client_id=${config.CLIENTID}&client_secret=${config.SECRET}&scope=data:read`;
 		let token = await fetch(url, { method: 'POST', headers: header, body: body });
 		token = await token.json();
+		console.info('got token',token);
 		return token.access_token;
 	}
 
