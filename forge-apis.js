@@ -7,8 +7,6 @@ const config = {
 	BASEAPI : process.env.BASEAPI //`https://quiet-sky-7620.fly.dev`
 };
 
-console.error(config);
-
 class Forge {
 	constructor(token) {
 		this.header = { Authorization: `Bearer ${token}`, "Content-Type": "Application/json" };
@@ -108,7 +106,6 @@ class Forge {
 		const body = `grant_type=client_credentials&client_id=${config.CLIENTID}&client_secret=${config.SECRET}&scope=data:read`;
 		let token = await fetch(url, { method: 'POST', headers: header, body: body });
 		token = await token.json();
-		console.info('got token',token);
 		return token.access_token;
 	}
 

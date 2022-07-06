@@ -19,19 +19,6 @@ server.get('/job/trigger', async (req, res) => {
 	res.jsonp(result);
 });
 
-
-// add/replace keys[urn] = data
-// make the URN's data mutable.
-function addreplaceURN(key, urn, data ) {
-	const chain = router.db.get(key); 
-	const exists = chain.getById(urn);
-	if (exists.value())
-		chain.updateById(urn, data).write();
-	else
-		chain.insert(data).write();
-}
-
-
 server.post('/jobs/:urn', function (req, res) {
 	req.body.workItemId = req.body.id;
 	req.body.urn = req.params.urn;
@@ -50,6 +37,16 @@ server.post('/urns/:urn', function (req, res) {
 	res.sendStatus(200)
 });
 
+// add/replace keys[urn] = data
+// make the URN's data mutable.
+function addreplaceURN(key, urn, data ) {
+	const chain = router.db.get(key); 
+	const exists = chain.getById(urn);
+	if (exists.value())
+		chain.updateById(urn, data).write();
+	else
+		chain.insert(data).write();
+}
 
 // poll for job status.  it uses json server endpoint to serve job status.  ie.
 // GET /job/status?urn=123 , returns: { status : 'complete' }

@@ -15,7 +15,8 @@
 			"env":{
 				"FORGE_CLIENTID":"8nW...bC4f",
 				"FORGE_SECRET":"9a...mvc",
-				"FORGE_ACTIVITYID":"8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f.CompoundStructLayerActivityv3+OneclickFixed"
+				"FORGE_ACTIVITYID":"8nWpMcyH5bge2LPW6hqDDAy9CKqQbC4f.CompoundStructLayerActivityv3+OneclickFixed",
+				"BASEAPI" : "http://4ac3-135-180-52-38.ngrok.io"
 			}
 		}
 	]
