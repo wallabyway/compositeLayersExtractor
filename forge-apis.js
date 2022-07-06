@@ -9,8 +9,7 @@ const config = {
 
 
 class Forge {
-	constructor(token, project) {
-		this.project = project;
+	constructor(token) {
 		this.header = { Authorization: `Bearer ${token}`, "Content-Type": "Application/json" };
 		this.token = token;
 	}
@@ -66,8 +65,8 @@ class Forge {
 		return result;
 	}
 
-	async getFolderContents(folder) {
-		const res = await fetch(`https://developer.api.autodesk.com/data/v1/projects/b.${this.project}/folders/${folder}/contents`, { headers: this.header });
+	async getFolderContents(project, folder) {
+		const res = await fetch(`https://developer.api.autodesk.com/data/v1/projects/b.${project}/folders/${folder}/contents`, { headers: this.header });
 		const jres = await res.json();
 		if (!jres.included) return jres;
 

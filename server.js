@@ -7,16 +7,15 @@ const middlewares = jsonServer.defaults({ static: 'www', bodyParser: true });
 server.use(middlewares);
 
 const JOBS = [];
-_forgeApi = null;
 
 /* ENDPOINTS for JOB STATUS */
 
 // Trigger a new job (designAutomation4Revit)
 server.get('/job/trigger', async (req, res) => {
-	if (!_forgeApi) {console.log('missing _forgeApi'); return;}
-	const result = await _forgeApi.triggerJob(req.query.urn, req.query.fileurl, req.query.token);
+	this.forgeApi = new forgeApi(req.query.token);
+	const result = await this.forgeApi.triggerJob(req.query.urn, req.query.fileurl, req.query.token);
 	const workItemId = result.id;
-	addreplaceURN("jobs", workItemId, {id:workItemId, workItemId:workItemId, urn:req.query.urn, status:"Queued", reportUrl:{}, stats:{}});
+	addreplaceURN("jobs", workItemId, {id:workItemId, workItemId:workItemId, urn:req.query.urn, time : Date().toString(), status:"queued", reportUrl:"", stats:""});
 	res.jsonp(result);
 });
 
@@ -34,15 +33,17 @@ function addreplaceURN(key, urn, data ) {
 
 
 server.post('/jobs/:urn', function (req, res) {
+	req.body.time = Date().toString();
 	req.body.workItemId = req.body.id;
-	req.body.id = req.params.urn;
-	if (!req.body.status) req.body.status = "inprogress"; 
+	req.body.urn = req.params.urn;
+	if (!req.body.status) req.body.status = "processing"; 
 	addreplaceURN("jobs", req.body.workItemId, req.body );
+	res.sendStatus(200);
 });
 
 server.post('/urns/:urn', function (req, res) {
 	req.body.id = req.params.urn;
-	if (!_forgeApi) {console.log('missing _forgeApi'); return;}
+	const _forgeApi = new forgeApi();
 	const results = _forgeApi.injectAdditionalProperties(req.params.urn, req.body)
 	addreplaceURN("urns", req.params.urn, results );
 	res.sendStatus(200)
@@ -62,8 +63,8 @@ server.post('/urns/:urn', function (req, res) {
 // BIM 360 - get folder details
 server.get('/bim/list', async (req, res) => {
 	if (!req.query.folder) return;
-	_forgeApi = new forgeApi(req.query.token, req.query.project);
-	const result = await _forgeApi.getFolderContents(req.query.folder);
+	this.forgeApi = new forgeApi(req.query.token);
+	const result = await this.forgeApi.getFolderContents(req.query.project, req.query.folder);
 	res.jsonp(result);
 });
 
