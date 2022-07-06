@@ -15,7 +15,7 @@ server.get('/job/trigger', async (req, res) => {
 	this.forgeApi = new forgeApi(req.query.token);
 	const result = await this.forgeApi.triggerJob(req.query.urn, req.query.fileurl, req.query.token);
 	const workItemId = result.id;
-	addreplaceURN("jobs", workItemId, {id:workItemId, workItemId:workItemId, urn:req.query.urn, time : Date().toString(), status:"queued", reportUrl:"", stats:""});
+	router.db.get("jobs").insert({id:workItemId, workItemId:workItemId, urn:req.query.urn, time : Date().toString(), status:"queued", reportUrl:"", stats:""}).write(); 
 	res.jsonp(result);
 });
 
@@ -33,10 +33,11 @@ function addreplaceURN(key, urn, data ) {
 
 
 server.post('/jobs/:urn', function (req, res) {
-	req.body.time = Date().toString();
 	req.body.workItemId = req.body.id;
 	req.body.urn = req.params.urn;
 	if (!req.body.status) req.body.status = "processing"; 
+	req.body.time = Date().toString();
+	console.log("job:",req.body);
 	addreplaceURN("jobs", req.body.workItemId, req.body );
 	res.sendStatus(200);
 });
