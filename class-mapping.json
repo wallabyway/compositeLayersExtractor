@@ -1,14 +1,50 @@
 {
-	"Walls": "WALL",
-	"Structural Columns": "COLUMN",
-	"Roofs": "ROOF",
-	"Floors": "SLAB",
-	"Stairs": "STAIRS",
-	"Doors": "DOOR",
-	"Windows": "WINDOW",
-	"Plumbing Fixtures": "SYSTEMS",
-	"Furniture": "FURNITURE",
-	"Furniture Systems": "FURNITURE",
-	"Site": "SITE",
-	"Topography": "SITE"
+	"Walls": {
+		"ifcclass": "WALL",
+		"Quantty": "m2"
+	},
+	"Structural Columns": {
+		"ifcclass": "COLUMN",
+		"Quantty": "m2"
+	},
+	"Roofs": {
+		"ifcclass": "ROOF",
+		"Quantty": "m2"
+	},
+	"Floors": {
+		"ifcclass": "SLAB",
+		"Quantty": "m2"
+	},
+	"Stairs": {
+		"ifcclass": "STAIRS",
+		"Quantty": "m2"
+	},
+	"Doors": {
+		"ifcclass": "DOOR",
+		"Quantty": "m2"
+	},
+	"Windows": {
+		"ifcclass": "WINDOW",
+		"Quantty": "m2"
+	},
+	"Plumbing Fixtures": {
+		"ifcclass": "SYSTEMS",
+		"Quantty": "m2"
+	},
+	"Furniture": {
+		"ifcclass": "FURNITURE",
+		"Quantty": "m2"
+	},
+	"Furniture Systems": {
+		"ifcclass": "FURNITURE",
+		"Quantty": "m2"
+	},
+	"Site": {
+		"ifcclass": "SITE",
+		"Quantty": "m2"
+	},
+	"Topography": {
+		"ifcclass": "SITE",
+		"Quantty": "m2"
+	}
 }
