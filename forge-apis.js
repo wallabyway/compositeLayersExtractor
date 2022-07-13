@@ -23,7 +23,9 @@ class Forge {
 		const DAPluginToken = await this.get2leggedAuth();
 
 		const body = {
-			"activityId": config.ACTIVITYID,
+			//Hardcoded ActivityId
+			"activityId": "ONECLICKPOC.CompoundExtractorDataDays+13thjuly22allda4r",
+			// "activityId": config.ACTIVITYID,
 			"arguments": {
 				"inputFile": {
 					"url": fileurl,
