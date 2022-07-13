@@ -1,50 +1,50 @@
 {
 	"Walls": {
 		"ifcclass": "WALL",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	},
 	"Structural Columns": {
 		"ifcclass": "COLUMN",
-		"Quantty": "m2"
+		"Quantity": "M3"
 	},
 	"Roofs": {
 		"ifcclass": "ROOF",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	},
 	"Floors": {
 		"ifcclass": "SLAB",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	},
 	"Stairs": {
 		"ifcclass": "STAIRS",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	},
 	"Doors": {
 		"ifcclass": "DOOR",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	},
 	"Windows": {
 		"ifcclass": "WINDOW",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	},
 	"Plumbing Fixtures": {
 		"ifcclass": "SYSTEMS",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	},
 	"Furniture": {
 		"ifcclass": "FURNITURE",
-		"Quantty": "m2"
+		"Quantity": "UNIT"
 	},
 	"Furniture Systems": {
 		"ifcclass": "FURNITURE",
-		"Quantty": "m2"
+		"Quantity": "UNIT"
 	},
 	"Site": {
 		"ifcclass": "SITE",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	},
 	"Topography": {
 		"ifcclass": "SITE",
-		"Quantty": "m2"
+		"Quantity": "M2"
 	}
 }

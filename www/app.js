@@ -59,7 +59,7 @@ window.app = new Vue({
 
         triggerJob: async function (item) {
             this.showtoast("Processing");
-            const url = `${ServerURL}/job/trigger?urn=${item.urn}&viewable=${item.guid}&fileurl=${item.url}&token=${this.token}`;
+            const url = `${ServerURL}/job/trigger?urn=${item.urn}&viewable=${item.filename}&fileurl=${item.url}&token=${this.token}`;
             const res = await (await fetch(url, { mode: 'cors' })).json();
             this.showtoast(res);
             console.log(res);

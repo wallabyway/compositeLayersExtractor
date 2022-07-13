@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const classesInMD = require('./class-mapping.json');
+const classesInRevit = require('./class-mapping.json');
 
 const config = {
 	CLIENTID: process.env.FORGE_CLIENTID,
@@ -33,7 +33,7 @@ class Forge {
 				},
 				"params": {
 					"verb": "get",
-					"url": `data:application/json,{'urn':'${urn}','options':{'walls':true,'floors':true,'ceilings':true,'extrusionroof':true,'footprintroof':true}}`
+					"url": `data:application/json,{'urn':'${urn}', 'viewname':'${viewable}','options':{'walls':true,'floors':true,'ceilings':true,'extrusionroof':true,'footprintroof':true}}`
 				},
 				"result": {
 					"verb": "post",
@@ -91,99 +91,68 @@ class Forge {
 		return result;
 	}
 
-
-	async injectAdditionalProperties(urn, body) {
-		// incorporate code from https://gist.github.com/JoaoMartins-Forge/15dead268936a8ac1d4cdd75e0fd45ac#file-connectmaterials-js-L60-L91
-		// const props = {
-		// 	"class": "Internal Wall",
-		// 	"ifcmaterial": "Precast Concrete",
-		// }
-		if (!body.results) return;
-
-		let modelViewable = urn.split('|');
-
-		this.twoleggedtoken = await this.get2leggedAuth();
-
-		// const metaDataGuid = await this.getMetadataGuid(urn);
-
-		await this.getHyerarchyMap(modelViewable[0], modelViewable[1]);
-
-		//now we add nodespath to jsonserver
-
-		let elementswithProperties = [];
-
-		for (const dbId of Object.keys(this.nodesPath.dbids)) {
-			const elementswithrequiredprops = await this.getLeafNodeProperties(modelViewable[0], modelViewable[1], dbId);
-			elementswithProperties.push(...elementswithrequiredprops);
-		}
-
-		elementswithProperties.
-			forEach(elementwithProperties => {
-				elementwithProperties.class = Object.keys(classesInMD).includes(elementwithProperties.class) ? classesInMD[elementwithProperties.class].ifcclass : 'OTHER';
-				let currentelementlayers = body.results.find(layer => layer.uniqueId === elementwithProperties.externalId);
-
-				if (!!currentelementlayers) {
-					elementwithProperties.layers = currentelementlayers.layers;
-
-					elementwithProperties.layers.forEach(layer => {
-						layer.width = (layer.width * 304.8) + ' mm';
-					})
+	calcHistogram(urn) {
+		const histogram = new Map();
+		urn.map(parent => {
+			parent.layers.forEach(i => {
+				const key = i.material;
+				if (histogram.has(key)) {
+					const item = histogram.get(key);
+					item.ids.push(parent.uniqueId);
+					item.count += 1;
+				} else {
+					histogram.set(key, { ids: [parent.uniqueId], count: 1 });
 				}
 			})
-
-		return elementswithProperties;
-		// return Object.assign(body, props);
+		});
+		return histogram;
 	}
 
-	async getLeafNodeProperties(urn, guid, objectid) {
-		let responsejson = {};
+	async deduplicateMaterials(urn, body) {
+		const deduplicated = {
+			"urn": urn,
+			"results": []
+		}
 
-		while (true) {
-			const res = await fetch(`https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata/${guid}/properties?objectid=${objectid}`, {
-				method: "GET",
-				headers: this._header(this.twoleggedtoken)
-			});
+		if (!body.results) return;
 
-			responsejson = await res.json();
-			let responseStatus = responsejson.result;
-
-			if (responseStatus === 'success') {
-				await sleep(1000);
+		body.results.forEach(material => {
+			let materialIFCClass = Object.keys(classesInRevit).includes(material.revitclass) ? classesInRevit[material.revitclass].ifcclass : "OTHER";
+			let currentMaterial = deduplicated.results.find(m => m.CLASS === materialIFCClass && m.IFCMATERIAL === material.revitmaterial)
+			if (!!currentMaterial) {
+				switch (currentMaterial.QTY_TYPE) {
+					case "M2":
+						currentMaterial.QUANTITY += material.materialareaqty;
+						break;
+					case "M3":
+						currentMaterial.QUANTITY += material.materialvolumeqty;
+						break;
+					default:
+						currentMaterial.QUANTITY += 1;
+						break;
+				}
 			}
 			else {
-				break;
+				let newMaterial = {
+					CLASS: materialIFCClass,
+					IFCMATERIAL: material.revitmaterial
+				};
+				newMaterial.QTY_TYPE = Object.keys(classesInRevit).includes(material.revitclass) ? classesInRevit[material.revitclass].Quantity : "NO MAPPING";
+				switch (newMaterial.QTY_TYPE) {
+					case "M2":
+						newMaterial.QUANTITY = material.materialareaqty;
+						break;
+					case "M3":
+						newMaterial.QUANTITY = material.materialvolumeqty;
+						break;
+					default:
+						newMaterial.QUANTITY = 1;
+						break;
+				}
+				deduplicated.results.push(newMaterial);
 			}
-		}
-
-		let requiredpropselements = responsejson.data.collection.map(this.getRequiredProps.bind(this));
-
-		return requiredpropselements;
-	}
-
-	getRequiredProps(obj) {
-		return {
-			externalId: obj.externalId,
-			class: this.nodesPath.dbids[obj.objectid].split('-')[1],
-			dimensions: obj.properties.Dimensions,
-			ifcmaterial: obj.properties['Materials and Finishes']
-			// ifcmaterial: Object.values(obj.properties['Materials and Finishes'])
-		}
-	}
-
-	getMap(node, stringPath) {
-		// if (Object.keys(this.classesInMD).includes(node.name) || !node.objects) {
-		// 	this.nodesPath.dbids[node.objectid] = stringPath + '-' + node.name;
-		// 	return;
-		// }
-
-		if (!node.objects) {
-			this.nodesPath.dbids[node.objectid] = stringPath + '-' + node.name;
-			return;
-		}
-
-		node.objects.forEach(childNode => {
-			this.getMap(childNode, stringPath + '-' + childNode.name);
 		});
+		return deduplicated;
 	}
 
 	async getModelViewables(urn, url) {
@@ -209,21 +178,6 @@ class Forge {
 		// return responsejson.data.metadata.find(v => v.name === '{3D}').guid;
 	}
 
-	async getHyerarchyMap(urn, guid) {
-		const res = await fetch(`https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata/${guid}`, {
-			method: "GET",
-			headers: this._header(this.twoleggedtoken)
-		})
-		let jsonTree = await res.json();
-		this.nodesPath = {
-			'urn': urn,
-			'dbids': {}
-		};
-		jsonTree.data.objects.forEach(nodeobj => {
-			this.getMap(nodeobj, nodeobj.name);
-		});
-	}
-
 	async get2leggedAuth() {
 		const url = `https://developer.api.autodesk.com/authentication/v1/authenticate`;
 		const header = { 'Content-Type': 'application/x-www-form-urlencoded' };
@@ -233,12 +187,6 @@ class Forge {
 		return token.access_token;
 	}
 
-}
-
-function sleep(ms) {
-	return new Promise((resolve) => {
-		setTimeout(resolve, ms);
-	});
 }
 
 module.exports = Forge;
