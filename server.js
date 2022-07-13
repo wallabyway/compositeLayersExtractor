@@ -34,13 +34,12 @@ server.post('/jobs/:urn', function (req, res) {
 server.post('/urns/:urn', async function (req, res) {
 	req.body.id = req.params.urn;
 	const _forgeApi = new forgeApi();
-	const results = await _forgeApi.injectAdditionalProperties(req.params.urn, req.body)
+	addreplaceURN("allinstances", req.params.urn, req.body);
+	const deduplicated = _forgeApi.calcHistogram(req.body.results).values();
+	addreplaceURN("deduplicated", req.params.urn, { id: req.params.urn, results: Array.from(deduplicated) });
+	// const results = await _forgeApi.injectAdditionalProperties(req.params.urn, req.body)
+	const results = await _forgeApi.deduplicateMaterials(req.params.urn, req.body);
 	addreplaceURN("urns", req.params.urn, results);
-	fs.writeFileSync("result.json", JSON.stringify(results), function (err) {
-		if (err) {
-			console.log(err);
-		}
-	});
 	res.sendStatus(200)
 });
 
@@ -60,8 +59,6 @@ function addreplaceURN(key, urn, data) {
 
 // set status 'onComplete' using json server, ie.
 // POST /job/status?urn=123 , BODY: {'status':'complete'}
-
-
 
 /* ENDPOINTS for ACC/BIM 360 utility endpoints */
 
