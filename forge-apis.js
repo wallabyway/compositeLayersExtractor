@@ -93,23 +93,23 @@ class Forge {
 
 	calcHistogram(urn) {
 		const histogram = new Map();
-		urn.map(parent => {
-			parent.layers.forEach(i => {
-				const key = i.material;
-				if (histogram.has(key)) {
-					const item = histogram.get(key);
-					item.ids.push(parent.uniqueId);
-					item.count += 1;
-				} else {
-					histogram.set(key, { ids: [parent.uniqueId], count: 1 });
-				}
-			})
+		urn.map(i => {
+			const key = i.revitmaterial;
+			if (histogram.has(key)) {
+				const item = histogram.get(key);
+				item.ids.push(i.hostid);
+				if (item.materialareaqty) item.materialareaqty += i.materialareaqty;
+				if (item.materialvolumeqty) item.materialvolumeqty += i.materialvolumeqty;
+			} else {
+				histogram.set(key, { ids: [i.hostid], material: key, volume: i.materialvolumeqty, area: i.materialareaqty });
+			}
 		});
 		return histogram;
 	}
 
 	async deduplicateMaterials(urn, body) {
 		const deduplicated = {
+			"id": urn,
 			"urn": urn,
 			"results": []
 		}
@@ -175,7 +175,6 @@ class Forge {
 		});
 
 		return result;
-		// return responsejson.data.metadata.find(v => v.name === '{3D}').guid;
 	}
 
 	async get2leggedAuth() {
