@@ -24,7 +24,7 @@ class Forge {
 
 		const body = {
 			//Hardcoded ActivityId
-			"activityId": "ONECLICKPOC.CompoundExtractorDataDays+13thjuly22allda4r",
+			"activityId": "ONECLICKPOC.CompoundExtractorDataDays+15thjuly22allda4r",
 			// "activityId": config.ACTIVITYID,
 			"arguments": {
 				"inputFile": {
