@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const classesInRevit = require('./class-mapping.json');
+// const classesInRevit = require('./class-mapping.json');
 
 const config = {
 	CLIENTID: process.env.FORGE_CLIENTID,
@@ -22,9 +22,11 @@ class Forge {
 	async triggerJob(urn, viewable, fileurl, token) {
 		const DAPluginToken = await this.get2leggedAuth();
 
+		let downloadmappingURL = await this.getSignedURL("aux-oneclick-bucket", "class-mapping.json")
+
 		const body = {
 			//Hardcoded ActivityId
-			"activityId": "ONECLICKPOC.CompoundExtractorDataDays+18thjuly22allda4r",
+			"activityId": "ONECLICKPOC.CompoundExtractorDataDays+28thjuly22allda4r",
 			// "activityId": config.ACTIVITYID,
 			"arguments": {
 				"inputFile": {
@@ -36,6 +38,10 @@ class Forge {
 				"params": {
 					"verb": "get",
 					"url": `data:application/json,{'urn':'${urn}', 'viewname':'${viewable}','options':{'walls':true,'floors':true,'ceilings':true,'extrusionroof':true,'footprintroof':true}}`
+				},
+				"mapping": {
+					"verb": "get",
+					"url": downloadmappingURL
 				},
 				"result": {
 					"verb": "post",
@@ -66,6 +72,20 @@ class Forge {
 		});
 		const result = await res.json();
 		return result;
+	}
+
+	async getSignedURL(bucketKey, objectKey) {
+		this.twoleggedtoken = await this.get2leggedAuth();
+
+		let downloadresult = await fetch(`https://developer.api.autodesk.com/oss/v2/buckets/${bucketKey}/objects/${objectKey}/signeds3download?minutesExpiration=60`, {
+			"method": "GET",
+			"headers": {
+				"Authorization": `Bearer ${this.twoleggedtoken}`
+			}
+		});
+
+		downloadresult = await downloadresult.json();
+		return downloadresult.url;
 	}
 
 	async getFolderContents(project, folder) {
@@ -99,11 +119,12 @@ class Forge {
 			const key = i.revitmaterial;
 			if (histogram.has(key)) {
 				const item = histogram.get(key);
-				item.ids.push(i.hostid);
+				item.ids.push(i.externalId);
 				if (item.materialareaqty) item.materialareaqty += i.materialareaqty;
 				if (item.materialvolumeqty) item.materialvolumeqty += i.materialvolumeqty;
+				if (item.elementlength) item.elementlength += i.elementlength;
 			} else {
-				histogram.set(key, { ids: [i.hostid], material: key, volume: i.materialvolumeqty, area: i.materialareaqty });
+				histogram.set(key, { ids: [i.externalId], material: key, volume: i.materialvolumeqty, area: i.materialareaqty, length: i.elementlength });
 			}
 		});
 		return histogram;
@@ -119,15 +140,17 @@ class Forge {
 		if (!body.results) return;
 
 		body.results.forEach(material => {
-			let materialIFCClass = Object.keys(classesInRevit).includes(material.revitclass) ? classesInRevit[material.revitclass].ifcclass : "OTHER";
-			let currentMaterial = deduplicated.results.find(m => m.CLASS === materialIFCClass && m.IFCMATERIAL === material.revitmaterial)
+			let currentMaterial = deduplicated.results.find(m => m.CLASS === material.ifcclass && m.MATERIAL === material.revitmaterial)
 			if (!!currentMaterial) {
-				switch (currentMaterial.QTY_TYPE) {
-					case "M2":
+				switch (currentMaterial.defaultunit) {
+					case "area":
 						currentMaterial.QUANTITY += material.materialareaqty;
 						break;
-					case "M3":
+					case "volume":
 						currentMaterial.QUANTITY += material.materialvolumeqty;
+						break;
+					case "length":
+						newMaterial.QUANTITY = material.elementlength;
 						break;
 					default:
 						currentMaterial.QUANTITY += 1;
@@ -136,19 +159,31 @@ class Forge {
 			}
 			else {
 				let newMaterial = {
-					CLASS: materialIFCClass,
-					IFCMATERIAL: material.revitmaterial
+					CLASS: material.ifcclass,
+					MATERIAL: material.revitmaterial,
+					CATEGORY: material.revitcategory,
+					LENGTH_M: material.elementlength,
+					AREA_M2: material.materialareaqty,
+					VOLUME_M3: material.materialvolumeqty,
+					MATERIALGROUP: material.group
 				};
-				newMaterial.QTY_TYPE = Object.keys(classesInRevit).includes(material.revitclass) ? classesInRevit[material.revitclass].Quantity : "NO MAPPING";
-				switch (newMaterial.QTY_TYPE) {
-					case "M2":
+
+				switch (material.defaultunit) {
+					case "area":
 						newMaterial.QUANTITY = material.materialareaqty;
+						newMaterial.QTY_TYPE = "M2";
 						break;
-					case "M3":
+					case "volume":
 						newMaterial.QUANTITY = material.materialvolumeqty;
+						newMaterial.QTY_TYPE = "M3";
+						break;
+					case "length":
+						newMaterial.QUANTITY = material.elementlength;
+						newMaterial.QTY_TYPE = "M";
 						break;
 					default:
 						newMaterial.QUANTITY = 1;
+						newMaterial.QTY_TYPE = "UNIT";
 						break;
 				}
 				deduplicated.results.push(newMaterial);
@@ -164,6 +199,10 @@ class Forge {
 			method: "GET",
 			headers: this._header(this.twoleggedtoken)
 		});
+
+		if (res.status !== 200) {
+			return null;
+		}
 
 		const jres = await res.json();
 
