@@ -71,7 +71,8 @@ window.app = new Vue({
             await this.renderTreeView(this.treeData, res);
             for (const model of this.treeData.children) {
                 const viewables = await this.listModelViewables(model.urn, model.url);
-                await this.renderTreeView(model, viewables);
+                if (viewables)
+                    await this.renderTreeView(model, viewables);
             }
         },
 
