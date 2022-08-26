@@ -51,6 +51,12 @@
               <ul class="navbar-list">
                 <li class="navbar-item"><img class="navbar-img" src="https://wallabyway.github.io/floor-animation/logo.png"/></li>
                 <li class="navbar-item"><button @click="loginlogout()" class="navbar-button button-primary">{{ !this.token ? 'Login' : 'Logout' }}</button></li>
+                <li class="navbar-item"><button class="navbar-button">
+                    <select name="standards" id="standards">
+    <option value="MBIE">MBIE (New Zealand)</option>
+    <option value="IFLI">IFLI (International Future Living Institute)</option>
+    <option value="LFIA">Living Future Institute of Australia</option>
+  </select></button></li>
                 <li class="navbar-item"><div id="toast" :class="{ invisible: !istoast }">{{toastmsg}}</div></li>
                 
                 <li class="navbar-itemr"><a href="https://github.com/wallabyway/compositeLayersExtractor"><button class="navbar-button">GitHub</button></a></li>
